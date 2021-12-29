@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename = 'css/Dropdown.css') }}">
+    </head>
+
+    <body>
+        <div>
+            <nav>
+                <p>Dave's Chord Visualization</p>
+                <ul>
+                    <li><a href="{{ url_for('home_page') }}">Home</a></li>
+                    <li><a href="#">Piano</a>
+                        <ul>
+                            <li><a href="{{ url_for('piano_chords') }}">Chords</a></li>
+                            <li><a href="{{ url_for('piano_scales') }}">Scales</a></li>
+                        </ul>
+                    </li>
+                        <li><a href="#">Guitar</a>
+                        <ul>
+                            <li><a href="{{ url_for('guitar_chords') }}">Chords</a></li>
+                            <li><a href="{{ url_for('guitar_scales') }}">Scales</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>   
+        </div>     
+
+        <h1 id="center-top">PIANO CHORDS</h1>
+        <img id="center" src="{{ url_for('static', filename = 'assets/keys.png') }}" />
+
+        <!-- Notes and scales are dropdown menus that the user uses to choose which scale they want to display -->
+        <form class="Notes">
+            <select id="Notes" style="position: absolute; left:640px; bottom:275px;">
+                <option value="A">A</option>
+                <option value="A#/Bb">A#/Bb</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="C#/Db">C#/Db</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="F#/Gb">F#/Gb</option>
+                <option value="G">G</option>
+                <option value="G#/Ab">G#/Ab</option>
+            </select>
+        </form>
+
+        <form class="Chords">
+            <select id="Chords" style="position: absolute; left:740px; bottom:275px;">
+                <option value="Major">Major</option>
+                <option value="Minor">Minor</option>
+                <option value="Major Dominant Seventh">Dominant Seventh</option>
+            </select>
+        </form>
+
+        <button onclick="update()" style="position: absolute; left:890px; bottom:275px; width: 60px">Submit</button>
+        
+        <!-- These are the way we actually represent the notes in the scale. We initially place
+            all the dots but with zero opacity (which is included in Dropdown.css)-->
+        <span id="C" class="dot" style = "position: absolute; left:460px; bottom:345px;"></span>
+        <span id="C#/Db" class="dot" style = "position: absolute; left:500px; bottom:415px;"></span>
+        <span id="D" class="dot" style = "position: absolute; left:545px; bottom:345px;"></span>
+        <span id="D#/Eb" class="dot" style = "position: absolute; left:605px; bottom:415px;"></span>
+        <span id="E" class="dot" style = "position: absolute; left:650px; bottom:345px;"></span>
+        <span id="F" class="dot" style = "position: absolute; left:745px; bottom:345px;"></span>
+        <span id="F#/Gb" class="dot" style = "position: absolute; left:800px; bottom:415px;"></span>
+        <span id="G" class="dot" style = "position: absolute; left:850px; bottom:345px;"></span>
+        <span id="G#/Ab" class="dot" style = "position: absolute; left:900px; bottom:415px;"></span>
+        <span id="A" class="dot" style = "position: absolute; left:940px; bottom:345px;"></span>
+        <span id="A#/Bb" class="dot" style = "position: absolute; left:1000px; bottom:415px;"></span>
+        <span id="B" class="dot" style = "position: absolute; left:1040px; bottom:345px;"></span>
+
+        <script type="text/javascript">
+
+            // A dictionary (object rather) for having a consistent indexing into the notes of a scale or chord
+            var starting_indices = {
+                "A" : 0, "A#/Bb" : 1, "B" : 2, "C" : 3, "C#/Db" : 4, "D" : 5, 
+                    "D#/Eb" : 6, "E" : 7, "F" : 8, "F#/Gb" : 9, "G" : 10, "G#/Ab" : 11
+            };
+
+            // Another dictionary (object) that stores the jumps necessary to construct certain scales.
+            var indice_jump_dictionary = {"Major" : [2,2,1,2,2,2,1], "Natural Minor" : [2,1,2,2,1,2,2], 
+                        "Harmonic Minor" : [2,1,2,2,1,3, 1], "Major Pentatonic" : [2,2,3,2,3],
+                        "Minor Pentatonic" : [3,2,2,3,2]}
+
+
+            var chord_index_jumps = {"Major": [0,2,4], "Minor" : [0,2,4], "Major Dominant Seventh" : [0,2,4,6], }
+
+            // Tells us which scale we should use to construct a chord
+            var chord_scale_dictionary = {"Major": "Major", "Minor": "Natural Minor", "Major Dominant Seventh": "Major"}
+
+            var list_of_notes = ["A", "A#/Bb", "B", "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab"]
+
+            // Given a note_value and a scale name we construct a list that contains the notes of that scale
+            function getScale(note_value, scale_name)
+            {
+                var index_jumps = indice_jump_dictionary[scale_name];
+                console.log(index_jumps);
+                scale_list = [];
+
+                var starting_indice = starting_indices[note_value];
+                var running_index_sum = 0;
+
+                scale_list.push(list_of_notes[starting_indice])
+
+                for (const x of index_jumps) // Iterate over the index jumps for the given scale and gather the notes in that scale
+                {
+                    scale_list.push(list_of_notes[(starting_indice + running_index_sum + x) % 12])
+                    running_index_sum += x;
+                }
+
+                return scale_list;
+            }
+
+            function getChord(note_value, chord_name)
+            {
+                console.log(note_value);
+                console.log(chord_name);
+
+                var scale_chord_uses = chord_scale_dictionary[chord_name];
+                var scale_for_chord = getScale(note_value, scale_chord_uses);
+
+                var chord_indices = chord_index_jumps[chord_name];
+
+                var chord_list = [];
+
+                for (const x of chord_indices)
+                {
+                    chord_list.push(scale_for_chord[x]);
+                }
+
+                return chord_list;
+            }
+
+            // Called when the user clicks the submit button -- from here we find the current note and scale selected and then 
+            // generate that on the keyboard
+            function update() 
+            {
+                var note = document.getElementById('Notes');
+                var chord = document.getElementById('Chords');
+
+                var note_value = note.options[note.selectedIndex].value;
+                var chord_value = chord.options[chord.selectedIndex].value;
+
+                var chord_list = getChord(note_value, chord_value);
+                drawChord(chord_list); 
+            }
+
+            // Modifies all the dots in the scale to have 0 opacity and thus be invisible on the screen
+            function clear()
+            {
+                for (const x of Object.keys(starting_indices))
+                {
+                    document.getElementById(x).style.opacity = 0;
+                }
+            }
+
+            // Draws the scale onto the piano
+            function drawChord(chord_list)
+            {
+                clear();
+                console.log(chord_list);
+
+                for (const x of chord_list)
+                {
+                    document.getElementById(x).style.opacity = 0.65;
+                }
+            }
+
+
+
+        </script>
+    </body>
+</html>
