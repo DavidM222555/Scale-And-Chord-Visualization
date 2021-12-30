@@ -16,7 +16,7 @@ function getScale(noteValue, scaleName)
 
     var index_jumps = indice_jump_dictionary[scaleName];
     console.log(index_jumps);
-    scale_list = [];
+    var scale_list = [];
 
     var starting_indice = starting_indices[noteValue];
     var running_index_sum = 0;
@@ -34,34 +34,34 @@ function getScale(noteValue, scaleName)
 
 // Called when the user clicks the submit button -- from here we find the current note and scale selected and then 
 // generate that on the keyboard
-function update() 
+function update(passed_document) 
 {
-    var note = document.getElementById('Notes');
-    var scale = document.getElementById('Scales');
+    var note = passed_document.getElementById('Notes');
+    var scale = passed_document.getElementById('Scales');
 
     var noteValue = note.options[note.selectedIndex].value;
     var scaleValue = scale.options[scale.selectedIndex].value;
 
     var scaleList = getScale(noteValue, scaleValue);
-    drawScale(scaleList); 
+    drawScale(passed_document, scaleList); 
 }
 
-function clear()
+function clear(passed_document)
 {
     for (const x of Object.keys(starting_indices))
     {
         console.log(x);
-        document.getElementById(x).style.opacity = 0;
+        passed_document.getElementById(x).style.opacity = 0;
     }
 }
 
-function drawScale(scaleList)
+function drawScale(passed_document, scaleList)
 {
-    clear();
+    clear(passed_document);
     console.log(scaleList);
 
     for (const x of scaleList)
     {
-        document.getElementById(x).style.opacity = 0.65;
+        passed_document.getElementById(x).style.opacity = 0.65;
     }
 }
