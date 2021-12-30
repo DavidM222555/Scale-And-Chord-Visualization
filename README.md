@@ -9,5 +9,6 @@ To run this application on Windows you need to have Flask installed (you can sim
 - Add functionality for guitar students to visualize chords and scales on the guitar. 
 - Clean up the code a bit and possibly refactor.
 
+# Images of the project
 ![ScalePage](https://user-images.githubusercontent.com/46248699/147706976-13e00bf0-8d11-436e-993d-420c1ccd10c9.png)
 ![ChordPage2](https://user-images.githubusercontent.com/46248699/147788420-d1476904-7c19-4557-ae29-d96a0729cfc9.png)
