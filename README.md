@@ -10,4 +10,4 @@ To run this application on Windows you need to have Flask installed (you can sim
 - Clean up the code a bit and possibly refactor.
 
 ![ScalePage](https://user-images.githubusercontent.com/46248699/147706976-13e00bf0-8d11-436e-993d-420c1ccd10c9.png)
-![ChordPage png](https://user-images.githubusercontent.com/46248699/147707035-a284a701-3c02-4e15-b79c-0fdd77929570.png)
+![ChordPage2](https://user-images.githubusercontent.com/46248699/147788420-d1476904-7c19-4557-ae29-d96a0729cfc9.png)
